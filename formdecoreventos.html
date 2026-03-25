@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Ylma Cake's Festa - Pedido de Aluguel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(145deg, #faf5ff 0%, #f3eaff 100%);
+      font-family: 'Inter', sans-serif;
+      padding: 2rem 1.5rem;
+      color: #2d2418;
+    }
+
+    /* container principal */
+    .form-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 2rem;
+      box-shadow: 0 25px 45px -12px rgba(128, 90, 213, 0.2);
+      overflow: hidden;
+      transition: all 0.2s ease;
+    }
+
+    /* header com logo e fundo lilás suave */
+    .form-header {
+      background: #9b7bdf;
+      padding: 1.8rem 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 4px solid #c4abff;
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      flex-wrap: wrap;
+    }
+
+    /* logo estilizada em branco para contrastar */
+    .logo-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-svg {
+      width: 70px;
+      height: 70px;
+    }
+
+    .logo-text h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      line-height: 1.2;
+      color: #ffffff;
+    }
+
+    .logo-text p {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #f0e6ff;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-loja {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 0.5rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .badge-loja i {
+      margin-right: 6px;
+      color: #ffffff;
+    }
+
+    /* conteúdo */
+    .form-body {
+      padding: 2rem 2rem 1.8rem;
+    }
+
+    .section-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      border-left: 6px solid #9b7bdf;
+      padding-left: 1rem;
+      margin-bottom: 1.5rem;
+      margin-top: 0.5rem;
+      color: #5a3e8c;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .input-group label {
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #8b6cd4;
+    }
+
+    .input-group input, 
+    .input-group select, 
+    .input-group textarea {
+      border: 1.5px solid #e6dcff;
+      border-radius: 20px;
+      padding: 0.8rem 1.2rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      background: #fefcff;
+      transition: all 0.2s;
+      outline: none;
+      color: #2d2418;
+    }
+
+    .input-group input:focus, 
+    .input-group select:focus, 
+    .input-group textarea:focus {
+      border-color: #9b7bdf;
+      box-shadow: 0 0 0 3px rgba(155, 123, 223, 0.2);
+      background: white;
+    }
+
+    /* área dos itens alugados (dinâmico) */
+    .items-section {
+      background: #fbf8ff;
+      border-radius: 1.5rem;
+      padding: 1.5rem;
+      margin: 1.5rem 0 2rem;
+      border: 1px solid #e9e0ff;
+    }
+
+    .items-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      margin-bottom: 1.2rem;
+    }
+
+    .items-header h3 {
+      font-weight: 800;
+      color: #8b6cd4;
+      font-size: 1.25rem;
+    }
+
+    .btn-add-item {
+      background: #9b7bdf;
+      border: none;
+      padding: 0.5rem 1.2rem;
+      border-radius: 40px;
+      color: white;
+      font-weight: 600;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 2px 6px rgba(155, 123, 223, 0.3);
+    }
+
+    .btn-add-item:hover {
+      background: #7a5bc0;
+      transform: scale(0.97);
+    }
+
+    .items-table-wrapper {
+      overflow-x: auto;
+    }
+
+    .items-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 1rem;
+      overflow: hidden;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    .items-table th {
+      background: #f0eaff;
+      padding: 0.9rem 0.8rem;
+      text-align: left;
+      font-weight: 700;
+      font-size: 0.8rem;
+      color: #6a4ca3;
+      text-transform: uppercase;
+    }
+
+    .items-table td {
+      padding: 0.8rem;
+      border-bottom: 1px solid #efe8ff;
+      vertical-align: middle;
+    }
+
+    .items-table input {
+      width: 100%;
+      border: 1px solid #e2d6ff;
+      border-radius: 14px;
+      padding: 0.6rem 0.7rem;
+      font-size: 0.85rem;
+      background: #fffefc;
+    }
+
+    .items-table input:focus {
+      border-color: #9b7bdf;
+    }
+
+    .remove-item {
+      background: #f0e9ff;
+      border: none;
+      color: #8b6cd4;
+      font-size: 1.1rem;
+      cursor: pointer;
+      border-radius: 30px;
+      width: 32px;
+      height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: 0.2s;
+    }
+
+    .remove-item:hover {
+      background: #9b7bdf;
+      color: white;
+    }
+
+    /* resumo */
+    .resumo-valor {
+      background: #f7f2ff;
+      border-radius: 1rem;
+      padding: 1rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+      font-weight: 700;
+    }
+
+    .total-pedido {
+      font-size: 1.4rem;
+      color: #8b6cd4;
+    }
+
+    /* cláusulas */
+    .clausulas-box {
+      background: #fbf8ff;
+      border-radius: 1.5rem;
+      padding: 1.5rem;
+      margin: 1.8rem 0 1.8rem;
+      border-left: 8px solid #9b7bdf;
+    }
+
+    .clausulas-box h4 {
+      font-size: 1.2rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      color: #8b6cd4;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .clausulas-box p {
+      margin-bottom: 0.75rem;
+      line-height: 1.5;
+      font-size: 0.92rem;
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .checkbox-group label {
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    .checkbox-group input {
+      width: 18px;
+      height: 18px;
+      accent-color: #9b7bdf;
+    }
+
+    /* botões finais */
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary, .btn-secondary, .btn-whatsapp, .btn-pdf {
+      border: none;
+      padding: 0.9rem 1.8rem;
+      border-radius: 40px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-primary {
+      background: #9b7bdf;
+      color: white;
+      box-shadow: 0 4px 8px rgba(155, 123, 223, 0.4);
+    }
+
+    .btn-primary:hover {
+      background: #7a5bc0;
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: #ede5ff;
+      color: #6a4ca3;
+    }
+
+    .btn-secondary:hover {
+      background: #e0d4ff;
+    }
+
+    .btn-whatsapp {
+      background: #25D366;
+      color: white;
+      box-shadow: 0 4px 8px rgba(37,211,102,0.3);
+    }
+
+    .btn-whatsapp:hover {
+      background: #128C7E;
+      transform: translateY(-2px);
+    }
+
+    .btn-pdf {
+      background: #e03e2f;
+      color: white;
+      box-shadow: 0 4px 8px rgba(224,62,47,0.3);
+    }
+
+    .btn-pdf:hover {
+      background: #b52b1e;
+      transform: translateY(-2px);
+    }
+
+    /* footer */
+    .form-footer {
+      background: #f8f3ff;
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.7rem;
+      color: #a48ad4;
+      border-top: 1px solid #e9e0ff;
+    }
+
+    /* Área de impressão escondida para gerar PDF */
+    .print-area {
+      position: fixed;
+      top: -10000px;
+      left: -10000px;
+      width: 100%;
+      background: white;
+      z-index: -1;
+    }
+
+    @media (max-width: 700px) {
+      body {
+        padding: 1rem;
+      }
+      .form-body {
+        padding: 1.2rem;
+      }
+      .items-table th, .items-table td {
+        padding: 0.5rem;
+      }
+      .btn-primary, .btn-secondary, .btn-whatsapp, .btn-pdf {
+        padding: 0.7rem 1.2rem;
+        font-size: 0.8rem;
+      }
+    }
+
+    /* estilo para impressão */
+    @media print {
+      body {
+        background: white;
+        padding: 0;
+        margin: 0;
+      }
+      .form-container {
+        box-shadow: none;
+        border-radius: 0;
+      }
+      .form-actions, .btn-add-item, .remove-item, .badge-loja {
+        display: none !important;
+      }
+      .items-table input {
+        border: none;
+        background: transparent;
+        padding: 0;
+        font-weight: normal;
+      }
+      .checkbox-group input {
+        transform: scale(1.2);
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="form-container" id="formContainer">
+  <div class="form-header">
+    <div class="logo-area">
+      <div class="logo-wrapper">
+        <!-- Logo personalizada em branco e lilás claro para contrastar com fundo lilás -->
+        <svg class="logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="45" fill="#C4ABFF" stroke="#FFFFFF" stroke-width="2.5"/>
+          <path d="M50 25 L58 35 L42 35 L50 25Z" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="1.5"/>
+          <rect x="38" y="35" width="24" height="28" rx="3" fill="#E0D0FF" stroke="#FFFFFF" stroke-width="1.5"/>
+          <circle cx="50" cy="48" r="3" fill="#FFFFFF"/>
+          <circle cx="44" cy="48" r="2" fill="#FFFFFF"/>
+          <circle cx="56" cy="48" r="2" fill="#FFFFFF"/>
+          <path d="M44 58 L56 58" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+          <path d="M32 68 L68 68" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
+          <text x="50" y="88" text-anchor="middle" font-size="9" font-weight="bold" fill="#FFFFFF">FESTA</text>
+        </svg>
+      </div>
+      <div class="logo-text">
+        <h1>Ylma CAKE'S FESTA</h1>
+        <p>aluguel de decoração & festas · momentos inesquecíveis</p>
+      </div>
+    </div>
+    <div class="badge-loja">
+      <i class="fas fa-calendar-alt"></i> Pedido especial
+    </div>
+  </div>
+
+  <div class="form-body">
+    <form id="orderForm">
+      <!-- DADOS DO CLIENTE -->
+      <div class="section-title">Dados do cliente / evento</div>
+      <div class="form-grid">
+        <div class="input-group">
+          <label><i class="fas fa-user"></i> Nome completo</label>
+          <input type="text" id="clienteNome" placeholder="Ex: Ana Paula Souza" required>
+        </div>
+        <div class="input-group">
+          <label><i class="fas fa-phone-alt"></i> Telefone / WhatsApp</label>
+          <input type="tel" id="clienteTel" placeholder="(11) 99999-1234" required>
+        </div>
+        <div class="input-group">
+          <label><i class="fas fa-calendar-day"></i> Data do evento</label>
+          <input type="date" id="dataEvento" required>
+        </div>
+        <div class="input-group">
+          <label><i class="fas fa-map-marker-alt"></i> Endereço de entrega</label>
+          <input type="text" id="endereco" placeholder="Rua, nº, bairro, cidade" required>
+        </div>
+      </div>
+
+      <!-- ITENS ALUGADOS (dinâmico) -->
+      <div class="items-section">
+        <div class="items-header">
+          <h3><i class="fas fa-boxes"></i> Itens para aluguel</h3>
+          <button type="button" class="btn-add-item" id="addItemBtn"><i class="fas fa-plus-circle"></i> Adicionar item</button>
+        </div>
+        <div class="items-table-wrapper">
+          <table class="items-table" id="itemsTable">
+            <thead>
+              <tr>
+                <th>Descrição do item (ex: mesa rústica, centro de mesa, painel)</th>
+                <th>Quantidade</th>
+                <th>Valor unitário (R$)</th>
+                <th>Subtotal (R$)</th>
+                <th style="width: 50px"></th>
+              </tr>
+            </thead>
+            <tbody id="itemsTableBody">
+              <!-- linhas dinâmicas serão inseridas via JS -->
+            </tbody>
+           </table>
+        </div>
+        <div class="resumo-valor">
+          <span><strong>💰 VALOR TOTAL DOS ITENS:</strong></span>
+          <span class="total-pedido" id="totalItensValor">R$ 0,00</span>
+        </div>
+        <div class="input-group" style="margin-top: 12px;">
+          <label><i class="fas fa-comment-dots"></i> Observações sobre os itens (opcional)</label>
+          <textarea rows="2" id="obsItens" placeholder="Ex: cores preferidas, detalhes da montagem..."></textarea>
+        </div>
+      </div>
+
+      <!-- CLÁUSULAS DE ENTREGA, DEVOLUÇÃO E DANOS -->
+      <div class="clausulas-box">
+        <h4><i class="fas fa-gavel"></i> Cláusulas contratuais - Entrega, Devolução e Danos</h4>
+        <p><strong>📦 Entrega e retirada:</strong> A Ylma Cake's Festa se compromete a entregar os itens no endereço informado, em até 2 dias antes do evento (conforme combinado). A devolução deverá ocorrer até 24h após o término do evento, em horário comercial, salvo acordo prévio por escrito. Todos os itens devem ser devolvidos no mesmo local e nas mesmas condições de embalagem/organização.</p>
+        <p><strong>🔄 Condições de devolução:</strong> O material alugado deverá ser devolvido em <strong>PERFEITO ESTADO DE CONSERVAÇÃO E LIMPEZA</strong>, sem avarias, manchas, quebras ou qualquer tipo de dano. É de inteira responsabilidade do contratante a conferência no ato da entrega e devolução.</p>
+        <p><strong>⚠️ Danos ao material:</strong> Caso qualquer item seja devolvido com danos (incluindo quebra, rasgos, perda de peças, manchas irreversíveis), o contratante arcará com o pagamento integral do valor de reposição ou reparo, conforme avaliação da locadora. <strong>O valor correspondente ao dano será acrescido ao presente pedido</strong> e deverá ser quitado em até 5 dias úteis. A não comunicação ou tentativa de ocultar danos implicará multa adicional de 20% sobre o valor do item danificado.</p>
+        <p><i class="fas fa-check-circle" style="color:#9b7bdf;"></i> Ao assinar (ou marcar concordância) o cliente declara ter ciência de que os itens serão vistoriados na entrega e na devolução, e que está de acordo com as regras de responsabilidade civil.</p>
+        <div class="checkbox-group">
+          <input type="checkbox" id="concordoClausulas" required>
+          <label for="concordoClausulas"><strong>Li e concordo integralmente com as cláusulas de entrega, devolução e responsabilidade por danos, incluindo o pagamento de reposição em caso de avarias.</strong></label>
+        </div>
+      </div>
+
+      <!-- ÁREA DE AÇÕES: WhatsApp e PDF -->
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" id="previewBtn"><i class="fas fa-eye"></i> Visualizar</button>
+        <button type="button" class="btn-whatsapp" id="whatsappBtn"><i class="fab fa-whatsapp"></i> Enviar para WhatsApp</button>
+        <button type="button" class="btn-pdf" id="pdfBtn"><i class="fas fa-file-pdf"></i> Salvar como PDF</button>
+        <button type="submit" class="btn-primary"><i class="fas fa-clipboard-list"></i> Finalizar pedido</button>
+      </div>
+    </form>
+  </div>
+  <div class="form-footer">
+    <i class="fas fa-heart" style="color:#9b7bdf;"></i> Ylma Cake's Festa - Decoração que transforma sonhos | Aluguel com segurança e qualidade
+  </div>
+</div>
+
+<!-- Área oculta para gerar PDF com layout bonito -->
+<div id="pdfPrintArea" class="print-area" style="position: fixed; top: -10000px; left: -10000px; width: 100%; background: white; padding: 2rem;"></div>
+
+<script>
+  // Gerenciamento da tabela de itens
+  function updateTotals() {
+    const tbody = document.getElementById('itemsTableBody');
+    const rows = tbody.querySelectorAll('tr');
+    let totalGeral = 0;
+
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+      const qtdInput = row.querySelector('.qtd-item');
+      const unitInput = row.querySelector('.unit-item');
+      const subtotalSpan = row.querySelector('.subtotal-valor');
+
+      if (qtdInput && unitInput && subtotalSpan) {
+        let qtd = parseFloat(qtdInput.value);
+        let unit = parseFloat(unitInput.value);
+        if (isNaN(qtd)) qtd = 0;
+        if (isNaN(unit)) unit = 0;
+        const subtotal = qtd * unit;
+        subtotalSpan.innerText = subtotal.toFixed(2);
+        totalGeral += subtotal;
+      }
+    }
+
+    document.getElementById('totalItensValor').innerText = `R$ ${totalGeral.toFixed(2).replace('.', ',')}`;
+    return totalGeral;
+  }
+
+  // criar nova linha de item
+  function createItemRow(desc = '', qtd = 1, unit = 0) {
+    const tr = document.createElement('tr');
+    const descTd = document.createElement('td');
+    const descInput = document.createElement('input');
+    descInput.type = 'text';
+    descInput.placeholder = 'Ex: Cadeira rústica, toalha, painel floral...';
+    descInput.value = desc;
+    descInput.classList.add('desc-item');
+    descInput.style.minWidth = '180px';
+    descTd.appendChild(descInput);
+
+    const qtdTd = document.createElement('td');
+    const qtdInput = document.createElement('input');
+    qtdInput.type = 'number';
+    qtdInput.value = qtd;
+    qtdInput.step = '1';
+    qtdInput.min = '1';
+    qtdInput.classList.add('qtd-item');
+    qtdInput.style.width = '80px';
+    qtdTd.appendChild(qtdInput);
+
+    const unitTd = document.createElement('td');
+    const unitInput = document.createElement('input');
+    unitInput.type = 'number';
+    unitInput.value = unit;
+    unitInput.step = '0.01';
+    unitInput.min = '0';
+    unitInput.classList.add('unit-item');
+    unitInput.style.width = '110px';
+    unitTd.appendChild(unitInput);
+
+    const subtotalTd = document.createElement('td');
+    const subtotalSpan = document.createElement('span');
+    subtotalSpan.classList.add('subtotal-valor');
+    subtotalSpan.innerText = (qtd * unit).toFixed(2);
+    subtotalTd.appendChild(subtotalSpan);
+
+    const actionTd = document.createElement('td');
+    const removeBtn = document.createElement('button');
+    removeBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
+    removeBtn.classList.add('remove-item');
+    removeBtn.title = 'Remover item';
+    removeBtn.onclick = function() {
+      tr.remove();
+      updateTotals();
+    };
+    actionTd.appendChild(removeBtn);
+
+    tr.appendChild(descTd);
+    tr.appendChild(qtdTd);
+    tr.appendChild(unitTd);
+    tr.appendChild(subtotalTd);
+    tr.appendChild(actionTd);
+
+    qtdInput.addEventListener('input', () => updateTotals());
+    unitInput.addEventListener('input', () => updateTotals());
+
+    return tr;
+  }
+
+  function addItemRow(desc = '', qtd = 1, unit = 0) {
+    const tbody = document.getElementById('itemsTableBody');
+    const newRow = createItemRow(desc, qtd, unit);
+    tbody.appendChild(newRow);
+    updateTotals();
+  }
+
+  // inicializar com exemplos
+  function initTableWithExamples() {
+    const tbody = document.getElementById('itemsTableBody');
+    tbody.innerHTML = '';
+    addItemRow('Mesa redonda 1,20m (madeira)', 2, 85.00);
+    addItemRow('Cadeira Tiffany dourada', 8, 22.50);
+    addItemRow('Kit toalha de mesa c/ jogos americanos', 3, 39.90);
+  }
+
+  // Função para coletar dados e gerar texto formatado para WhatsApp
+  function gerarTextoPedido() {
+    const nome = document.getElementById('clienteNome').value.trim();
+    const telefone = document.getElementById('clienteTel').value.trim();
+    const dataEvento = document.getElementById('dataEvento').value;
+    const endereco = document.getElementById('endereco').value.trim();
+    const obs = document.getElementById('obsItens').value.trim();
+    const concordou = document.getElementById('concordoClausulas').checked;
+
+    if (!nome || !telefone || !dataEvento || !endereco) {
+      alert('⚠️ Preencha todos os dados obrigatórios do cliente/evento antes de gerar o pedido.');
+      return null;
+    }
+
+    // coletar itens
+    const rows = document.querySelectorAll('#itemsTableBody tr');
+    let itemsList = [];
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+      const descInput = row.querySelector('.desc-item');
+      const qtdInput = row.querySelector('.qtd-item');
+      const unitInput = row.querySelector('.unit-item');
+      let desc = descInput ? descInput.value : '';
+      let qtd = qtdInput ? parseFloat(qtdInput.value) : 0;
+      let unit = unitInput ? parseFloat(unitInput.value) : 0;
+      if (desc === '') desc = '[Item sem descrição]';
+      if (!isNaN(qtd) && !isNaN(unit) && qtd > 0 && unit >= 0) {
+        if (qtd > 0) {
+          itemsList.push({ desc, quantidade: qtd, unitario: unit, subtotal: qtd * unit });
+        }
+      }
+    }
+
+    if (itemsList.length === 0) {
+      alert('❌ Adicione pelo menos um item com quantidade válida.');
+      return null;
+    }
+
+    const totalGeral = updateTotals();
+    const dataFormatada = dataEvento ? new Date(dataEvento).toLocaleDateString('pt-BR') : 'Não definida';
+
+    let itensTexto = '';
+    itemsList.forEach((item, idx) => {
+      itensTexto += `${idx+1}️⃣ *${item.desc}*\n   Quantidade: ${item.quantidade}  |  Valor unit: R$ ${item.unitario.toFixed(2)}  |  Subtotal: R$ ${item.subtotal.toFixed(2)}\n`;
+    });
+
+    const texto = `*🪄 YLMA CAKE'S FESTA - PEDIDO DE ALUGUEL*\n\n` +
+      `*👤 CLIENTE:* ${nome}\n` +
+      `*📞 TELEFONE:* ${telefone}\n` +
+      `*📅 DATA DO EVENTO:* ${dataFormatada}\n` +
+      `*📍 ENDEREÇO DE ENTREGA:* ${endereco}\n\n` +
+      `*🎨 ITENS ALUGADOS:*\n${itensTexto}\n` +
+      `*💰 TOTAL GERAL: R$ ${totalGeral.toFixed(2).replace('.', ',')}*\n\n` +
+      `*📝 OBSERVAÇÕES:* ${obs || 'Nenhuma observação'}\n\n` +
+      `*📋 CLÁUSULAS:* ${concordou ? '✅ Cliente concordou com as cláusulas de entrega, devolução e danos.' : '❌ Cliente NÃO concordou formalmente com as cláusulas!'}\n\n` +
+      `*⚠️ IMPORTANTE:*\n` +
+      `- Os itens devem ser devolvidos em PERFEITO ESTADO.\n` +
+      `- Danos ao material geram reposição integral conforme valor do item.\n` +
+      `- Entrega e devolução conforme combinado.\n\n` +
+      `_Este pedido foi gerado automaticamente. Para confirmar, entre em contato._\n` +
+      `✨ Ylma Cake's Festa - Decoração que transforma sonhos ✨`;
+
+    return texto;
+  }
+
+  // Gerar HTML para impressão em PDF
+  function gerarHTMLParaPDF() {
+    const nome = document.getElementById('clienteNome').value.trim();
+    const telefone = document.getElementById('clienteTel').value.trim();
+    const dataEvento = document.getElementById('dataEvento').value;
+    const endereco = document.getElementById('endereco').value.trim();
+    const obs = document.getElementById('obsItens').value.trim();
+    const concordou = document.getElementById('concordoClausulas').checked;
+
+    if (!nome || !telefone || !dataEvento || !endereco) {
+      alert('⚠️ Preencha todos os dados obrigatórios antes de gerar o PDF.');
+      return null;
+    }
+
+    const rows = document.querySelectorAll('#itemsTableBody tr');
+    let itemsHTML = '';
+    let totalGeral = 0;
+
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+      const descInput = row.querySelector('.desc-item');
+      const qtdInput = row.querySelector('.qtd-item');
+      const unitInput = row.querySelector('.unit-item');
+      let desc = descInput ? descInput.value : '';
+      let qtd = qtdInput ? parseFloat(qtdInput.value) : 0;
+      let unit = unitInput ? parseFloat(unitInput.value) : 0;
+      if (desc === '') desc = '[Item sem descrição]';
+      if (!isNaN(qtd) && !isNaN(unit) && qtd > 0) {
+        const subtotal = qtd * unit;
+        totalGeral += subtotal;
+        itemsHTML += `
+          <tr style="border-bottom: 1px solid #e9e0ff;">
+            <td style="padding: 10px; font-size: 12px;">${desc}</td>
+            <td style="padding: 10px; text-align: center;">${qtd}</td>
+            <td style="padding: 10px; text-align: right;">R$ ${unit.toFixed(2)}</td>
+            <td style="padding: 10px; text-align: right;">R$ ${subtotal.toFixed(2)}</td>
+           </tr>
+        `;
+      }
+    }
+
+    if (itemsHTML === '') {
+      alert('❌ Adicione pelo menos um item válido para gerar o PDF.');
+      return null;
+    }
+
+    const dataFormatada = dataEvento ? new Date(dataEvento).toLocaleDateString('pt-BR') : 'Não definida';
+    const dataHoje = new Date().toLocaleDateString('pt-BR');
+
+    return `<!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <title>Pedido_Ylma_${nome.replace(/\s/g, '_')}</title>
+      <style>
+        body {
+          font-family: 'Inter', 'Segoe UI', sans-serif;
+          margin: 0;
+          padding: 30px;
+          color: #2d2418;
+        }
+        .header {
+          text-align: center;
+          background: #9b7bdf;
+          padding: 25px;
+          border-radius: 20px;
+          margin-bottom: 25px;
+        }
+        .logo-title {
+          font-size: 32px;
+          font-weight: 800;
+          color: #ffffff;
+        }
+        .sub {
+          color: #f0e6ff;
+          margin-top: 5px;
+        }
+        .info-cliente {
+          background: #fbf8ff;
+          padding: 15px;
+          border-radius: 16px;
+          margin: 20px 0;
+          border-left: 6px solid #9b7bdf;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin: 20px 0;
+        }
+        th {
+          background: #f0eaff;
+          padding: 12px;
+          text-align: left;
+          font-weight: bold;
+          color: #6a4ca3;
+        }
+        .total {
+          font-size: 20px;
+          font-weight: bold;
+          text-align: right;
+          margin-top: 15px;
+          padding-top: 10px;
+          border-top: 2px solid #e9e0ff;
+          color: #8b6cd4;
+        }
+        .clausulas {
+          background: #fbf8ff;
+          padding: 15px;
+          border-radius: 16px;
+          margin: 20px 0;
+          font-size: 11px;
+        }
+        .footer {
+          text-align: center;
+          margin-top: 30px;
+          font-size: 10px;
+          color: #a48ad4;
+        }
+        .obs {
+          margin: 15px 0;
+          font-style: italic;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="header">
+        <div class="logo-title">Ylma CAKE'S FESTA</div>
+        <div class="sub">Aluguel de decoração & festas · momentos inesquecíveis</div>
+      </div>
+      
+      <div class="info-cliente">
+        <strong>👤 CLIENTE:</strong> ${nome}<br>
+        <strong>📞 TELEFONE:</strong> ${telefone}<br>
+        <strong>📅 DATA DO EVENTO:</strong> ${dataFormatada}<br>
+        <strong>📍 ENDEREÇO DE ENTREGA:</strong> ${endereco}<br>
+        <strong>📅 EMISSÃO:</strong> ${dataHoje}
+      </div>
+      
+      <h3 style="color:#8b6cd4;">🎨 ITENS ALUGADOS</h3>
+      <table>
+        <thead>
+          <tr style="background:#f0eaff;">
+            <th>Descrição do Item</th>
+            <th>Qtd</th>
+            <th>Valor Unit.</th>
+            <th>Subtotal</th>
+           </tr>
+        </thead>
+        <tbody>
+          ${itemsHTML}
+        </tbody>
+       </table>
+      <div class="total">
+        TOTAL DO PEDIDO: R$ ${totalGeral.toFixed(2).replace('.', ',')}
+      </div>
+      
+      <div class="obs">
+        <strong>📝 OBSERVAÇÕES:</strong> ${obs || 'Nenhuma observação'}
+      </div>
+      
+      <div class="clausulas">
+        <strong>📋 CLÁUSULAS CONTRATUAIS</strong><br>
+        • Entrega e devolução: conforme combinado, itens devem retornar em perfeito estado.<br>
+        • Danos ao material: o contratante arcará com reposição integral do valor do item danificado.<br>
+        • ${concordou ? '✓ Cliente concordou com as cláusulas.' : '✗ Cliente NÃO concordou formalmente com as cláusulas (necessário aceite).'}
+      </div>
+      
+      <div class="footer">
+        Ylma Cake's Festa - Decoração que transforma sonhos<br>
+        Entrega e devolução: itens em perfeito estado. Danos geram reposição integral.
+      </div>
+    </body>
+    </html>`;
+  }
+
+  // Função para enviar WhatsApp
+  function enviarWhatsApp() {
+    const texto = gerarTextoPedido();
+    if (!texto) return;
+    const numero = document.getElementById('clienteTel').value.trim().replace(/\D/g, '');
+    if (!numero) {
+      alert('Por favor, preencha o telefone do cliente para enviar o pedido via WhatsApp.');
+      return;
+    }
+    let numeroFormatado = numero;
+    if (numeroFormatado.length === 11) {
+      numeroFormatado = '55' + numeroFormatado;
+    } else if (numeroFormatado.length === 10) {
+      numeroFormatado = '55' + numeroFormatado;
+    } else if (numeroFormatado.length === 13 && numeroFormatado.startsWith('55')) {
+      numeroFormatado = numeroFormatado;
+    } else {
+      numeroFormatado = '55' + numeroFormatado;
+    }
+    const url = `https://wa.me/${numeroFormatado}?text=${encodeURIComponent(texto)}`;
+    window.open(url, '_blank');
+  }
+
+  // Função para gerar PDF
+  async function gerarPDF() {
+    const htmlContent = gerarHTMLParaPDF();
+    if (!htmlContent) return;
+
+    const printDiv = document.getElementById('pdfPrintArea');
+    printDiv.innerHTML = htmlContent;
+    printDiv.style.position = 'relative';
+    printDiv.style.top = '0';
+    printDiv.style.left = '0';
+    printDiv.style.display = 'block';
+    printDiv.style.zIndex = '9999';
+    printDiv.style.background = 'white';
+    printDiv.style.padding = '20px';
+
+    try {
+      const element = printDiv;
+      const opt = {
+        margin: [0.5, 0.5, 0.5, 0.5],
+        filename: `pedido_ylma_${document.getElementById('clienteNome').value.trim().replace(/\s/g, '_') || 'cliente'}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, letterRendering: true },
+        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+      };
+      await html2pdf().set(opt).from(element).save();
+    } catch (error) {
+      console.error('Erro ao gerar PDF:', error);
+      alert('Erro ao gerar PDF. Tente novamente.');
+    } finally {
+      printDiv.style.position = 'fixed';
+      printDiv.style.top = '-10000px';
+      printDiv.style.left = '-10000px';
+      printDiv.style.display = 'none';
+      printDiv.innerHTML = '';
+    }
+  }
+
+  // Visualizar pedido (resumo)
+  function visualizarPedido() {
+    const texto = gerarTextoPedido();
+    if (texto) {
+      alert(texto.replace(/\*/g, ''));
+    }
+  }
+
+  // Finalizar pedido
+  function finalizarPedido(event) {
+    event.preventDefault();
+    const concordou = document.getElementById('concordoClausulas').checked;
+    if (!concordou) {
+      alert('❌ Você precisa aceitar as cláusulas de entrega, devolução e responsabilidade por danos para finalizar o pedido.');
+      return;
+    }
+    const textoPedido = gerarTextoPedido();
+    if (!textoPedido) return;
+
+    alert('✅ Pedido registrado com sucesso!\n\nVocê pode enviar via WhatsApp ou salvar em PDF para compartilhar com o cliente.\n\nObrigado por escolher a Ylma Cake\'s Festa!');
+    const pedidoCompleto = {
+      data: new Date().toISOString(),
+      cliente: document.getElementById('clienteNome').value.trim(),
+      total: document.getElementById('totalItensValor').innerText,
+      texto: textoPedido
+    };
+    localStorage.setItem('ultimoPedidoYlma', JSON.stringify(pedidoCompleto));
+  }
+
+  // eventos
+  document.addEventListener('DOMContentLoaded', () => {
+    initTableWithExamples();
+    document.getElementById('addItemBtn').addEventListener('click', () => addItemRow('', 1, 0));
+    document.getElementById('previewBtn').addEventListener('click', visualizarPedido);
+    document.getElementById('whatsappBtn').addEventListener('click', enviarWhatsApp);
+    document.getElementById('pdfBtn').addEventListener('click', gerarPDF);
+    document.getElementById('orderForm').addEventListener('submit', finalizarPedido);
+    document.getElementById('itemsTableBody').addEventListener('input', (e) => {
+      if(e.target.classList.contains('qtd-item') || e.target.classList.contains('unit-item')) {
+        updateTotals();
+      }
+    });
+  });
+</script>
+</body>
+</html>
