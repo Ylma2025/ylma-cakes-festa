@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário de Locação - Festa</title>
+    <!-- Include jsPDF and html2canvas from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #e9ecef;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+            padding: 2rem;
+        }
+
+        /* Container do formulário para visualização e impressão/PDF */
+        .form-container {
+            max-width: 1200px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.1);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Versão para impressão/PDF - terá watermark e layout fixo */
+        .rental-form {
+            padding: 2rem 2rem 2.5rem 2rem;
+            position: relative;
+            background: white;
+        }
+
+        /* Watermark (marca d'água) estilo fundo suave */
+        .watermark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            z-index: 5;
+            opacity: 0.12;
+            overflow: hidden;
+        }
+        .watermark img {
+            width: 70%;
+            max-width: 500px;
+            transform: rotate(-20deg);
+            filter: grayscale(0.2);
+        }
+
+        /* Cabeçalho com logo superior direito */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.8rem;
+            border-bottom: 2px solid #f4a261;
+            padding-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        .title-section h1 {
+            font-size: 1.9rem;
+            color: #e76f51;
+            letter-spacing: -0.5px;
+        }
+        .title-section p {
+            color: #2a9d8f;
+            font-weight: 500;
+            margin-top: 6px;
+        }
+        .logo-top {
+            width: 100px;
+            height: auto;
+            background: #fff3e0;
+            border-radius: 16px;
+            padding: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .logo-top img {
+            width: 100%;
+            display: block;
+        }
+
+        /* Campos do cliente */
+        .customer-section {
+            background: #fef9f4;
+            padding: 1.2rem 1.5rem;
+            border-radius: 24px;
+            margin-bottom: 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .input-group label {
+            font-weight: 700;
+            color: #2d3e50;
+            font-size: 0.85rem;
+            letter-spacing: 0.3px;
+        }
+        .input-group input, .input-group textarea {
+            padding: 10px 14px;
+            border: 1px solid #e9c8b3;
+            border-radius: 16px;
+            font-size: 0.9rem;
+            background: white;
+            transition: 0.2s;
+            font-family: inherit;
+        }
+        .input-group input:focus, .input-group textarea:focus {
+            outline: none;
+            border-color: #f4a261;
+            box-shadow: 0 0 0 2px rgba(244,162,97,0.2);
+        }
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        /* Tabela de itens: 15 linhas */
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.8rem 0 1.5rem;
+            font-size: 0.85rem;
+        }
+        .items-table th {
+            background: #f4a261;
+            color: white;
+            padding: 12px 8px;
+            font-weight: 600;
+            border: 1px solid #e09d5e;
+        }
+        .items-table td {
+            border: 1px solid #ffe0c4;
+            padding: 8px;
+            background: #fffef7;
+        }
+        .items-table input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            padding: 8px 4px;
+            font-size: 0.85rem;
+            font-family: inherit;
+        }
+        .items-table input:focus {
+            outline: none;
+            background: #fff1e0;
+            border-radius: 12px;
+        }
+        .items-table textarea {
+            width: 100%;
+            border: none;
+            background: transparent;
+            resize: vertical;
+            font-family: inherit;
+            font-size: 0.85rem;
+        }
+        .items-table textarea:focus {
+            outline: none;
+            background: #fff1e0;
+            border-radius: 8px;
+        }
+
+        /* Datas de entrega e devolução */
+        .dates-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            background: #f8f9fa;
+            padding: 1rem 1.5rem;
+            border-radius: 20px;
+            margin: 1rem 0 2rem;
+        }
+        .date-box {
+            flex: 1;
+            min-width: 200px;
+        }
+        .date-box label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: #e76f51;
+        }
+        .date-box input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #e9c8b3;
+            border-radius: 20px;
+        }
+
+        /* Botões */
+        .action-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+        button {
+            background: #2a9d8f;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-weight: bold;
+            color: white;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        button:hover {
+            background: #21867a;
+            transform: scale(1.02);
+        }
+        .btn-pdf {
+            background: #e76f51;
+        }
+        .btn-pdf:hover {
+            background: #d45a3a;
+        }
+        .btn-reset {
+            background: #6c757d;
+        }
+
+        /* rodapé opcional */
+        .footer-note {
+            text-align: center;
+            font-size: 0.7rem;
+            color: #adb5bd;
+            margin-top: 2rem;
+            border-top: 1px dashed #f4a261;
+            padding-top: 1rem;
+        }
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+                margin: 0;
+            }
+            .action-buttons {
+                display: none;
+            }
+            .form-container {
+                box-shadow: none;
+            }
+            .watermark {
+                opacity: 0.15;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="form-container" id="formContainer">
+    <div class="rental-form" id="rentalFormContent">
+        <!-- MARCA D'ÁGUA (logo como watermark) -->
+        <div class="watermark" id="watermarkDiv">
+            <!-- será preenchido via js com a imagem anexada (logo) -->
+            <img id="watermarkImg" alt="Logo Marca D'água" />
+        </div>
+
+        <!-- Cabeçalho com logo no canto superior direito -->
+        <div class="header">
+            <div class="title-section">
+                <h1>🎉 YEMA CAKE'S FESTA</h1>
+                <p>Locação de Itens para Festas - Contrato Simplificado</p>
+            </div>
+            <div class="logo-top" id="logoTopRight">
+                <img id="topLogoImg" alt="Logo Yema" />
+            </div>
+        </div>
+
+        <!-- DADOS DO CLIENTE -->
+        <div class="customer-section">
+            <div class="input-group">
+                <label>Nome Completo / Razão Social *</label>
+                <input type="text" id="clientName" placeholder="Ex: Maria da Silva Oliveira">
+            </div>
+            <div class="input-group">
+                <label>CPF / CNPJ</label>
+                <input type="text" id="clientDoc" placeholder="000.000.000-00">
+            </div>
+            <div class="input-group">
+                <label>Telefone / WhatsApp</label>
+                <input type="text" id="clientPhone" placeholder="(11) 99999-9999">
+            </div>
+            <div class="input-group full-width">
+                <label>Endereço Completo (entrega/retirada)</label>
+                <input type="text" id="clientAddress" placeholder="Rua, nº, bairro, cidade - CEP">
+            </div>
+            <div class="input-group">
+                <label>E-mail</label>
+                <input type="email" id="clientEmail" placeholder="cliente@email.com">
+            </div>
+            <div class="input-group">
+                <label>Evento / Observações</label>
+                <input type="text" id="eventObs" placeholder="Aniversário, casamento, etc.">
+            </div>
+        </div>
+
+        <!-- TABELA DE ITENS: 15 LINHAS PARA DESCREVER ITENS, QUANTIDADE E VALOR -->
+        <table class="items-table" id="itemsTable">
+            <thead>
+                <tr><th>#</th><th>Descrição do Item</th><th>Quantidade</th><th>Valor Unitário (R$)</th><th>Subtotal (R$)</th></tr>
+            </thead>
+            <tbody id="tableBody">
+                <!-- 15 linhas serão geradas via JS para garantir estrutura uniforme -->
+            </tbody>
+            <tfoot>
+                <tr style="background:#fff0e0; font-weight:bold;">
+                    <td colspan="4" style="text-align:right;">VALOR TOTAL DA LOCAÇÃO (R$):</td>
+                    <td id="totalAmountCell" style="text-align:center; background:#f4e1c6;">0,00</td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <!-- DATAS DE ENTREGA E DEVOLUÇÃO -->
+        <div class="dates-row">
+            <div class="date-box">
+                <label>📦 Data de ENTREGA do material</label>
+                <input type="date" id="deliveryDate">
+            </div>
+            <div class="date-box">
+                <label>🔄 Data de DEVOLUÇÃO do material</label>
+                <input type="date" id="returnDate">
+            </div>
+            <div class="date-box">
+                <label>📍 Local de Entrega/Retirada (se diferente)</label>
+                <input type="text" id="deliveryPlace" placeholder="Mesmo endereço ou local específico">
+            </div>
+        </div>
+
+        <!-- Termos adicionais curtos -->
+        <div style="font-size:0.75rem; color:#555; margin-top:0.5rem; background:#fef1e6; padding:8px 16px; border-radius:28px;">
+            <span>✔️ Declaro que recebi os itens em boas condições e comprometo-me a devolver no prazo estipulado. Sujeito a multa por atraso conforme contrato.</span>
+        </div>
+        <div class="footer-note">
+            YEMA CAKE'S FESTA - Locação e Eventos | Este documento é um recibo/contrato de locação.
+        </div>
+    </div>
+
+    <div class="action-buttons">
+        <button class="btn-reset" id="resetBtn">Limpar Formulário</button>
+        <button class="btn-pdf" id="generatePdfBtn">📄 Gerar PDF com Dados</button>
+    </div>
+</div>
+
+<script>
+    // ---------- CONFIGURAÇÃO DA LOGO (imagem anexada ylmafesta.jpeg) ----------
+    // O arquivo "ylmafesta.jpeg" foi fornecido no contexto. Para usar como marca d'água e no topo,
+    // vamos carregar a imagem via Blob / URL.createObjectURL a partir do anexo.
+    // Como o sistema simula um ambiente com o arquivo, podemos usar o nome "ylmafesta.jpeg".
+    // Para garantir compatibilidade mesmo sem servidor, usaremos uma função que tenta carregar a imagem
+    // do anexo original. Se falhar, exibe um placeholder estilizado, mas idealmente o arquivo está presente.
+    // Vamos utilizar a seguinte estratégia: criar um elemento Image e setar src = "ylmafesta.jpeg"
+    // Além disso, para fallback, usaremos um texto estilizado, mas o logo deve aparecer.
+    
+    let logoImageUrl = null;
+    let logoLoaded = false;
+
+    function loadLogoAndApply() {
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.crossOrigin = "Anonymous";
+            // Tenta carregar a imagem "ylmafesta.jpeg" que está no mesmo diretório (contexto do chat)
+            img.onload = function() {
+                // Criar uma URL a partir da imagem carregada para usar tanto watermark quanto logo superior
+                try {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+                    const dataURL = canvas.toDataURL('image/jpeg');
+                    logoImageUrl = dataURL;
+                    logoLoaded = true;
+                    // Aplica nas duas posições
+                    const watermarkImgElem = document.getElementById('watermarkImg');
+                    const topLogoImgElem = document.getElementById('topLogoImg');
+                    if (watermarkImgElem) watermarkImgElem.src = logoImageUrl;
+                    if (topLogoImgElem) topLogoImgElem.src = logoImageUrl;
+                    resolve(true);
+                } catch(e) {
+                    console.warn("Erro ao converter imagem:", e);
+                    setFallbackLogo();
+                    resolve(false);
+                }
+            };
+            img.onerror = function() {
+                console.warn("Não foi possível carregar ylmafesta.jpeg. Aplicando fallback com texto.");
+                setFallbackLogo();
+                resolve(false);
+            };
+            img.src = "ylmafesta.jpeg"; // nome do arquivo anexado
+        });
+    }
+
+    function setFallbackLogo() {
+        // Fallback visual: cria um div estilizado com texto e cor temática
+        const watermarkDiv = document.getElementById('watermarkDiv');
+        if(watermarkDiv) {
+            watermarkDiv.innerHTML = '<div style="font-size: 5rem; font-weight: bold; color: #f4a261; opacity:0.25; transform: rotate(-20deg);">YEMA CAKE\'S<br>FESTA</div>';
+            watermarkDiv.style.display = 'flex';
+            watermarkDiv.style.alignItems = 'center';
+            watermarkDiv.style.justifyContent = 'center';
+        }
+        const topLogoDiv = document.getElementById('logoTopRight');
+        if(topLogoDiv) {
+            topLogoDiv.innerHTML = '<div style="background:#f4e1c6; border-radius:20px; padding:8px 12px; text-align:center; font-weight:bold; color:#e76f51;">YEMA<br>CAKE\'S<br>FESTA</div>';
+        }
+        // Ajusta imagem watermark para não quebrar layout
+        const watermarkImgElem = document.getElementById('watermarkImg');
+        if(watermarkImgElem) watermarkImgElem.style.display = 'none';
+        const topImgElem = document.getElementById('topLogoImg');
+        if(topImgElem) topImgElem.style.display = 'none';
+    }
+
+    // Gerar as 15 linhas da tabela dinamicamente
+    function generateTableRows() {
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = '';
+        for (let i = 1; i <= 15; i++) {
+            const tr = document.createElement('tr');
+            // Coluna número
+            const tdNum = document.createElement('td');
+            tdNum.textContent = i;
+            tdNum.style.textAlign = 'center';
+            tdNum.style.fontWeight = '500';
+            // Descrição do item (textarea ou input para caber descrição)
+            const tdDesc = document.createElement('td');
+            const descInput = document.createElement('textarea');
+            descInput.rows = 1;
+            descInput.placeholder = `Ex: Mesa redonda, toalha, cadeira, etc.`;
+            descInput.style.width = '100%';
+            descInput.style.fontFamily = 'inherit';
+            descInput.classList.add('item-desc');
+            descInput.setAttribute('data-row', i);
+            tdDesc.appendChild(descInput);
+            // Quantidade
+            const tdQty = document.createElement('td');
+            const qtyInput = document.createElement('input');
+            qtyInput.type = 'number';
+            qtyInput.min = '0';
+            qtyInput.step = '1';
+            qtyInput.value = '';
+            qtyInput.placeholder = '0';
+            qtyInput.classList.add('item-qty');
+            qtyInput.setAttribute('data-row', i);
+            tdQty.appendChild(qtyInput);
+            // Valor Unitário
+            const tdValor = document.createElement('td');
+            const valorInput = document.createElement('input');
+            valorInput.type = 'number';
+            valorInput.step = '0.01';
+            valorInput.min = '0';
+            valorInput.placeholder = '0,00';
+            valorInput.classList.add('item-price');
+            valorInput.setAttribute('data-row', i);
+            tdValor.appendChild(valorInput);
+            // Subtotal (somente leitura)
+            const tdSub = document.createElement('td');
+            const subSpan = document.createElement('span');
+            subSpan.classList.add('subtotal-span');
+            subSpan.setAttribute('data-row', i);
+            subSpan.textContent = '0,00';
+            subSpan.style.fontWeight = '500';
+            tdSub.appendChild(subSpan);
+            tr.appendChild(tdNum);
+            tr.appendChild(tdDesc);
+            tr.appendChild(tdQty);
+            tr.appendChild(tdValor);
+            tr.appendChild(tdSub);
+            tbody.appendChild(tr);
+        }
+        attachItemEvents();
+        updateTotal();
+    }
+
+    function attachItemEvents() {
+        const qtyInputs = document.querySelectorAll('.item-qty');
+        const priceInputs = document.querySelectorAll('.item-price');
+        const updateSubtotal = () => updateTotal();
+        qtyInputs.forEach(inp => inp.addEventListener('input', updateSubtotal));
+        priceInputs.forEach(inp => inp.addEventListener('input', updateSubtotal));
+    }
+
+    function updateTotal() {
+        let total = 0;
+        for (let i = 1; i <= 15; i++) {
+            const qtyElem = document.querySelector(`.item-qty[data-row="${i}"]`);
+            const priceElem = document.querySelector(`.item-price[data-row="${i}"]`);
+            const subSpan = document.querySelector(`.subtotal-span[data-row="${i}"]`);
+            let qty = parseFloat(qtyElem?.value) || 0;
+            let price = parseFloat(priceElem?.value) || 0;
+            let subtotal = qty * price;
+            if (!isNaN(subtotal) && subSpan) {
+                subSpan.textContent = subtotal.toFixed(2).replace('.', ',');
+                total += subtotal;
+            } else if (subSpan) {
+                subSpan.textContent = '0,00';
+            }
+        }
+        const totalCell = document.getElementById('totalAmountCell');
+        if (totalCell) totalCell.textContent = total.toFixed(2).replace('.', ',');
+        return total;
+    }
+
+    // Função para coletar dados da tabela e preparar para o PDF
+    function getItemsData() {
+        let itemsList = [];
+        for (let i = 1; i <= 15; i++) {
+            const descElem = document.querySelector(`.item-desc[data-row="${i}"]`);
+            const qtyElem = document.querySelector(`.item-qty[data-row="${i}"]`);
+            const priceElem = document.querySelector(`.item-price[data-row="${i}"]`);
+            const desc = descElem ? descElem.value.trim() : '';
+            const qty = qtyElem ? qtyElem.value : '';
+            const price = priceElem ? priceElem.value : '';
+            if (desc !== '' || (qty !== '' && qty !== '0') || (price !== '' && price !== '0')) {
+                itemsList.push({ row: i, desc, qty, price });
+            }
+        }
+        return itemsList;
+    }
+
+    // Gerar PDF usando html2canvas + jsPDF, preservando layout, marca d'água e logo
+    async function generatePDF() {
+        // Atualiza total antes de gerar
+        updateTotal();
+        const element = document.getElementById('rentalFormContent');
+        if (!element) return;
+
+        // Adicionar classes temporárias para garantir que a marca d'água esteja visível no canvas
+        // Mas já existe, só vamos garantir que a imagem carregou
+        if (!logoLoaded) {
+            // Aguardar um pouco caso ainda não tenha carregado, mas chamar load novamente
+            await loadLogoAndApply();
+        }
+        
+        // Mostrar um loading leve
+        const btn = document.getElementById('generatePdfBtn');
+        const originalText = btn.innerText;
+        btn.innerText = 'Gerando PDF...';
+        btn.disabled = true;
+        
+        try {
+            // Criar um clone para melhor renderização? Não necessário, mas vamos usar scale maior
+            const canvas = await html2canvas(element, {
+                scale: 2.5,
+                backgroundColor: '#ffffff',
+                logging: false,
+                useCORS: true,
+                allowTaint: false
+            });
+            const imgData = canvas.toDataURL('image/png');
+            const { jsPDF } = window.jspdf;
+            // Formato A4 (orientação retrato)
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
+            const imgWidth = pdfWidth;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            let position = 0;
+            // Se a altura da imagem exceder uma página, faremos múltiplas páginas
+            let heightLeft = imgHeight;
+            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pdfHeight;
+            while (heightLeft > 0) {
+                position = heightLeft - imgHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pdfHeight;
+            }
+            pdf.save(`locacao_yema_festa_${new Date().toISOString().slice(0,19)}.pdf`);
+        } catch (error) {
+            console.error('Erro ao gerar PDF:', error);
+            alert('Ocorreu um erro ao gerar o PDF. Verifique o console e tente novamente.');
+        } finally {
+            btn.innerText = originalText;
+            btn.disabled = false;
+        }
+    }
+
+    // Limpar todos os campos do formulário (dados do cliente, tabela de itens, datas)
+    function resetForm() {
+        // Limpar campos cliente
+        document.getElementById('clientName').value = '';
+        document.getElementById('clientDoc').value = '';
+        document.getElementById('clientPhone').value = '';
+        document.getElementById('clientAddress').value = '';
+        document.getElementById('clientEmail').value = '';
+        document.getElementById('eventObs').value = '';
+        document.getElementById('deliveryDate').value = '';
+        document.getElementById('returnDate').value = '';
+        document.getElementById('deliveryPlace').value = '';
+        // Limpar tabela itens
+        for (let i = 1; i <= 15; i++) {
+            const descElem = document.querySelector(`.item-desc[data-row="${i}"]`);
+            const qtyElem = document.querySelector(`.item-qty[data-row="${i}"]`);
+            const priceElem = document.querySelector(`.item-price[data-row="${i}"]`);
+            if (descElem) descElem.value = '';
+            if (qtyElem) qtyElem.value = '';
+            if (priceElem) priceElem.value = '';
+        }
+        updateTotal();
+        alert('Formulário limpo!');
+    }
+
+    // Inicialização completa
+    window.addEventListener('DOMContentLoaded', async () => {
+        generateTableRows();
+        await loadLogoAndApply();
+        // Anexar eventos
+        document.getElementById('generatePdfBtn').addEventListener('click', generatePDF);
+        document.getElementById('resetBtn').addEventListener('click', resetForm);
+        // Garantir que sempre que alterar dados da tabela atualize total
+        const tableBody = document.getElementById('tableBody');
+        if (tableBody) {
+            const observer = new MutationObserver(() => updateTotal());
+            observer.observe(tableBody, { childList: true, subtree: true, attributes: true });
+        }
+        updateTotal();
+    });
+</script>
+</body>
+</html>
